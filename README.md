@@ -1,0 +1,2 @@
+# gujetiaws
+AWS terraform practice
