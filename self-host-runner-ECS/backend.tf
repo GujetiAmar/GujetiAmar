@@ -1,7 +1,11 @@
 terraform {
   backend "s3" {
-    bucket         = "self-host-runner-bucket"
-    region         = "ap-northeast-1"
-    key            =  "terraform.tfstate"
+    bucket = "my-host-runner-bucket"
+    key    = "global/s3/terraform.tfstate"
+    region = "ap-northeast-1"
+    access_key = "AKIA5OYZXQC7Y7NVGHR2"
+    secret_key = "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"
   }
 }
+
+

@@ -1,9 +1,15 @@
-terraform {
+/*terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
     }
   }
+}*/
+
+provider "aws" {
+  region = "ap-northeast-1"
+  access_key = "AKIA5OYZXQC7Y7NVGHR2"
+  secret_key = "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"
 }
 
 # VPC
@@ -26,15 +32,15 @@ resource "aws_internet_gateway" "int_gateway" {
 }
 
 # Private subnet
-resource "aws_subnet" "private_subnet" {
+/*resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = var.private_subnet_cidr
   availability_zone = "ap-northeast-1c"
 
   tags = {
     Name = "${var.PREFIX}_private_subnet"
-  }
-}
+  }*/
+
 
 # Public subnet
 resource "aws_subnet" "public_subnet" {
@@ -48,21 +54,21 @@ resource "aws_subnet" "public_subnet" {
 }
 
 # Nat Gateway for private subnet
-resource "aws_eip" "nat_gateway_eip" {
+/*resource "aws_eip" "nat_gateway_eip" {
   vpc = true
   tags = {
     Name = "${var.PREFIX}_nat_gateway_eip"
   }
-}
+}*/
 
-resource "aws_nat_gateway" "nat_gateway" {
+/*resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = aws_eip.nat_gateway_eip.id
   subnet_id     = aws_subnet.public_subnet.id
 
   tags = {
     Name = "${var.PREFIX}_nat_gateway"
   }
-}
+}*/
 
 # Public route table
 resource "aws_route_table" "route_table_public" {
@@ -79,7 +85,7 @@ resource "aws_route_table" "route_table_public" {
 }
 
 # Private route table
-resource "aws_route_table" "route_table_private" {
+/*resource "aws_route_table" "route_table_private" {
   vpc_id = aws_vpc.vpc.id
 
   route {
@@ -90,7 +96,7 @@ resource "aws_route_table" "route_table_private" {
   tags = {
     Name = "${var.PREFIX}_private"
   }
-}
+}*/
 
 # Associations
 resource "aws_route_table_association" "assoc_1" {
@@ -98,10 +104,10 @@ resource "aws_route_table_association" "assoc_1" {
   route_table_id = aws_route_table.route_table_public.id
 }
 
-resource "aws_route_table_association" "assoc_2" {
+/*resource "aws_route_table_association" "assoc_2" {
   subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.route_table_private.id
-}
+}*/
 
 # ECR repository
 resource "aws_ecr_repository" "ECR_repository" {
@@ -310,8 +316,8 @@ resource "aws_ecs_service" "ecs_service" {
 
   network_configuration {
     security_groups  = [aws_security_group.ecs_sg.id]
-    subnets          = [aws_subnet.private_subnet.id]
-    assign_public_ip = false
+    subnets          = [aws_subnet.public_subnet.id]
+    assign_public_ip = true
   }
 }
 
